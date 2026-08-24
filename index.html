@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Calorie Counter</title>
+<meta name="description" content="Täglicher Kalorien- und Gewichtstracker">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Calories">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <h1>Calorie Counter</h1>
+  </header>
+
+  <main id="main">
+
+    <!-- ENTRY VIEW -->
+    <section id="view-entry" class="view active" aria-label="Tageseingabe">
+      <div class="day-nav">
+        <button id="prevDay" class="day-nav-btn" aria-label="Vorheriger Tag">‹</button>
+        <button id="dayLabel" class="day-label" aria-label="Datum wählen">Heute</button>
+        <button id="nextDay" class="day-nav-btn" aria-label="Nächster Tag">›</button>
+      </div>
+      <input type="date" id="datePicker" class="date-picker-hidden">
+
+      <div id="entrySwipe" class="entry-swipe">
+        <form id="entryForm" autocomplete="off">
+
+          <div class="card">
+            <label class="field">
+              <span>Gewicht (kg)</span>
+              <input type="number" inputmode="decimal" step="0.1" min="0" id="f-weight" placeholder="z. B. 78.4">
+            </label>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Mahlzeiten (kcal)</h2>
+            <label class="field">
+              <span>Frühstück</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-breakfast" placeholder="0">
+            </label>
+            <label class="field">
+              <span>Mittagessen</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-lunch" placeholder="0">
+            </label>
+            <label class="field">
+              <span>Abendessen</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-dinner" placeholder="0">
+            </label>
+            <label class="field">
+              <span>Snack</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-snack" placeholder="0">
+            </label>
+            <div class="field sum-row">
+              <span>Summe Aufnahme</span>
+              <strong id="sum-intake">0 kcal</strong>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Verbrauch (kcal)</h2>
+            <label class="field">
+              <span>Kalorien Ruhe</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-resting" placeholder="0">
+            </label>
+            <label class="field">
+              <span>Kalorien Aktiv</span>
+              <input type="number" inputmode="numeric" min="0" step="1" id="f-active" placeholder="0">
+            </label>
+            <div class="field sum-row">
+              <span>Summe Verbrauch</span>
+              <strong id="sum-burned">0 kcal</strong>
+            </div>
+          </div>
+
+          <div class="card balance-card">
+            <h2 class="card-title">Gegenüberstellung</h2>
+            <div class="balance-row">
+              <div class="balance-item">
+                <span>Aufnahme</span>
+                <strong id="bal-intake">0</strong>
+              </div>
+              <div class="balance-item">
+                <span>Verbrauch</span>
+                <strong id="bal-burned">0</strong>
+              </div>
+            </div>
+            <div class="balance-diff" id="bal-diff">
+              <span id="bal-diff-label">Bilanz</span>
+              <strong id="bal-diff-value">0 kcal</strong>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- LIST VIEW -->
+    <section id="view-list" class="view" aria-label="Tagesübersicht">
+      <div class="list-header">
+        <h2>Alle Tage</h2>
+      </div>
+      <div id="dayList" class="day-list"></div>
+      <p id="listEmpty" class="empty-hint" hidden>Noch keine Einträge vorhanden.</p>
+    </section>
+
+    <!-- CHART VIEW -->
+    <section id="view-chart" class="view" aria-label="Grafische Auswertung">
+      <div class="list-header chart-header">
+        <h2>Verlauf</h2>
+        <div class="range-switch" id="rangeSwitch">
+          <button data-range="7" class="range-btn">7T</button>
+          <button data-range="30" class="range-btn active">30T</button>
+          <button data-range="90" class="range-btn">90T</button>
+          <button data-range="all" class="range-btn">Alle</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="chart-title">Kalorien: Aufnahme vs. Verbrauch</h3>
+        <div id="calChart" class="chart-wrap"></div>
+        <div class="legend">
+          <span class="legend-item"><i class="dot dot-intake"></i>Aufnahme</span>
+          <span class="legend-item"><i class="dot dot-burned"></i>Verbrauch</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="chart-title">Gewichtsverlauf</h3>
+        <div id="weightChart" class="chart-wrap"></div>
+      </div>
+
+      <p id="chartEmpty" class="empty-hint" hidden>Noch keine Einträge vorhanden.</p>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab-btn active" data-view="view-entry">
+      <span class="tab-icon">✎</span><span>Eingabe</span>
+    </button>
+    <button class="tab-btn" data-view="view-list">
+      <span class="tab-icon">☰</span><span>Liste</span>
+    </button>
+    <button class="tab-btn" data-view="view-chart">
+      <span class="tab-icon">📈</span><span>Grafik</span>
+    </button>
+  </nav>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
